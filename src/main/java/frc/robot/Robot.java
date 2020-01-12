@@ -7,8 +7,15 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfInt;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
@@ -30,16 +37,14 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-    public static CvSink cvSink;
-    public static CvSource outputStream;
+    // public static CvSink cvSink;
+    // public static CvSource outputStream;
 
-    public static Mat image;
-    public static Mat output;
-    public static Mat contoursInput;
-    public static Mat contoursOutput;
+    // public static Mat image;
+    // public static Mat output;
 
-    GripPipeline pipeline = new GripPipeline();
-    public static UsbCamera camera;
+    // //GripPipeline pipeline = new GripPipeline();
+    // public static UsbCamera camera;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -52,49 +57,108 @@ public class Robot extends TimedRobot {
 
       
     new Thread(() -> {
-
-      camera = CameraServer.getInstance().startAutomaticCapture();
-      camera.setResolution(1280, 720);
+      //Initializes Camera from RoboRio and starts capture
+      UsbCamera camera =CameraServer.getInstance().startAutomaticCapture();
+      camera.setResolution(640, 480); //sets resolution
       
-      camera.setExposureManual(10);
-      
-      cvSink = CameraServer.getInstance().getVideo();
-      outputStream = CameraServer.getInstance().putVideo("Processed", 1280, 720);
+      //Gets video from RoboRio CameraServer [accessible via SmrtDshbrd]
+      CvSink cvSink = CameraServer.getInstance().getVideo();
+      CvSource outputStream = CameraServer.getInstance().putVideo("Processed", 640, 480);
 
-      System.out.println("IMAGE CREATED");
-      image = new Mat();
-      output = new Mat();
-      
-      while(!Thread.interrupted())
-      {
-       
+      Mat source = new Mat(); //Mats are essentially video frame Objects
+      Mat output = new Mat();
+      GripPipeline pipeline = new GripPipeline();
+      camera.setExposureManual(0);
 
-          System.out.println("THREAD WAS NOT INTERRUPTED");
-
-          
-          if(cvSink.grabFrame(image)==0)
-            System.out.println("i just lost the game");
+      while(!Thread.interrupted()){
+          //source is changed by reference with vid frame (Mat)
+          if(cvSink.grabFrame(source) == 0)
+            System.out.print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
           else
           {
-            System.out.println("RAW FRAME WAS GRABBED");
+            Mat hslThresholdInput = source;
+		double[] hue = {70.14388592123126, 90.9215075652347};
+		double[] sat = {243.0755510497436, 255.0};
+    double[] lum = {65.73742173558516, 169.41978968857904};
+    Mat hslThresholdOutput = new Mat();
+    Imgproc.cvtColor(hslThresholdInput, hslThresholdOutput, Imgproc.COLOR_BGR2HLS);
+		Core.inRange(hslThresholdOutput, new Scalar(hue[0], lum[0], sat[0]),
+      new Scalar(hue[1], lum[1], sat[1]), hslThresholdOutput);
+      
 
-          //  pipeline.process(image);
-           Imgproc.cvtColor(image, output, Imgproc.COLOR_BGR2GRAY);
-          // Imgproc.cvtColor(image, output, Imgproc.COLOR_BGR2HLS);
-		      // Core.inRange(output, new Scalar(70.14388592123126, 65.73742173558516, 243.0755510497436),
-          //     new Scalar(90.9215075652347, 169.41978968857904, 255.0), output);
-          
-          
 
 
 
-          System.out.println("IMAGE WAS PROCESSED");
+      // Mat findContoursInput = hslThresholdOutput;
+      // boolean findContoursExternalOnly = true;
+      // Mat hierarchy = new Mat();
+      // ArrayList<MatOfPoint> findContoursOutput = new ArrayList<MatOfPoint>();
+      // findContoursOutput.clear();
+      // int mode;
+      // if (findContoursExternalOnly) {
+      //   mode = Imgproc.RETR_EXTERNAL;
+      // }
+      // else {
+      //   mode = Imgproc.RETR_LIST;
+      // }
+      // int method = Imgproc.CHAIN_APPROX_SIMPLE;
+      // Imgproc.findContours(findContoursInput, findContoursOutput, hierarchy, mode, method);
+  
+  
+  
+  
+      // ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
+      // ArrayList<MatOfPoint> filterContoursOutput = new ArrayList<MatOfPoint>();
+  
+      // double filterContoursMinArea = 12.0;
+      // double filterContoursMinPerimeter = 45.0;
+      // double filterContoursMinWidth = 38.0;
+      // double filterContoursMaxWidth = 1000.0;
+      // double filterContoursMinHeight = 53.0;
+      // double filterContoursMaxHeight = 1000.0;
+      // double[] filterContoursSolidity = {0, 100};
+      // double filterContoursMaxVertices = 1000000.0;
+      // double filterContoursMinVertices = 0.0;
+      // double filterContoursMinRatio = 0.0;
+      // double filterContoursMaxRatio = 1000.0;
+      
+      
+      // MatOfInt hull = new MatOfInt();
+      // filterContoursOutput.clear();
+      // //operation
+      // for (int i = 0; i < filterContoursContours.size(); i++) {
+      //   final MatOfPoint contour = filterContoursContours.get(i);
+      //   final Rect bb = Imgproc.boundingRect(contour);
+      //   if (bb.width < filterContoursMinWidth || bb.width > filterContoursMaxWidth) continue;
+      //   if (bb.height < filterContoursMinHeight || bb.height > filterContoursMaxHeight) continue;
+      //   final double area = Imgproc.contourArea(contour);
+      //   if (area < filterContoursMinArea) continue;
+      //   if (Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true) < filterContoursMinPerimeter) continue;
+      //   Imgproc.convexHull(contour, hull);
+      //   MatOfPoint mopHull = new MatOfPoint();
+      //   mopHull.create((int) hull.size().height, 1, CvType.CV_32SC2);
+      //   for (int j = 0; j < hull.size().height; j++) {
+      //     int index = (int)hull.get(j, 0)[0];
+      //     double[] point = new double[] { contour.get(index, 0)[0], contour.get(index, 0)[1]};
+      //     mopHull.put(j, 0, point);
+      //   }
+      //   final double solid = 100 * area / Imgproc.contourArea(mopHull);
+      //   if (solid < filterContoursSolidity[0] || solid > filterContoursSolidity[1]) continue;
+      //   if (contour.rows() < filterContoursMinVertices || contour.rows() > filterContoursMaxVertices)	continue;
+      //   final double ratio = bb.width / (double)bb.height;
+      //   if (ratio < filterContoursMinRatio || ratio > filterContoursMaxRatio) continue;
+      //   filterContoursOutput.add(contour);
+      // }
 
-          outputStream.putFrame(output);
-          System.out.println("IMAGE WAS OUTPUTTED");
+
+
+    
+      //   pipeline.process(hslThresholdOutput);
+          //OpenCV turns vid frame image to grayscale and changes output    
+          //by reference
+          //Imgproc.cvtColor(source,output,Imgproc.COLOR_BGR2GRAY);      
+          outputStream.putFrame(hslThresholdOutput); //outputs frame to CameraServer
           }
-
-
       }
     }).start();
   
