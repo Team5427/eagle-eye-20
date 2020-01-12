@@ -7,7 +7,10 @@
 
 package frc.robot;
 
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
@@ -31,6 +34,9 @@ public class Robot extends TimedRobot {
     public static CvSource outputStream;
 
     public static Mat image;
+    public static Mat output;
+    public static Mat contoursInput;
+    public static Mat contoursOutput;
 
     GripPipeline pipeline = new GripPipeline();
     public static UsbCamera camera;
@@ -48,14 +54,16 @@ public class Robot extends TimedRobot {
     new Thread(() -> {
 
       camera = CameraServer.getInstance().startAutomaticCapture();
-      camera.setResolution(640, 480);
-      //camera.setExposureManual(90);
+      camera.setResolution(1280, 720);
+      
+      camera.setExposureManual(10);
       
       cvSink = CameraServer.getInstance().getVideo();
-      outputStream = CameraServer.getInstance().putVideo("Processed", 640, 480);
+      outputStream = CameraServer.getInstance().putVideo("Processed", 1280, 720);
 
       System.out.println("IMAGE CREATED");
       image = new Mat();
+      output = new Mat();
       
       while(!Thread.interrupted())
       {
@@ -65,15 +73,24 @@ public class Robot extends TimedRobot {
 
           
           if(cvSink.grabFrame(image)==0)
-            System.out.println("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
+            System.out.println("i just lost the game");
           else
           {
             System.out.println("RAW FRAME WAS GRABBED");
 
-          pipeline.process(image);
+          //  pipeline.process(image);
+           Imgproc.cvtColor(image, output, Imgproc.COLOR_BGR2GRAY);
+          // Imgproc.cvtColor(image, output, Imgproc.COLOR_BGR2HLS);
+		      // Core.inRange(output, new Scalar(70.14388592123126, 65.73742173558516, 243.0755510497436),
+          //     new Scalar(90.9215075652347, 169.41978968857904, 255.0), output);
+          
+          
+
+
+
           System.out.println("IMAGE WAS PROCESSED");
 
-          outputStream.putFrame(image);
+          outputStream.putFrame(output);
           System.out.println("IMAGE WAS OUTPUTTED");
           }
 
@@ -91,11 +108,13 @@ public class Robot extends TimedRobot {
    * LiveWindow and SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {
+  public void robotPeriodic() 
+  {
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
+    
     
   }
 

@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.HashMap;
 
-import edu.wpi.first.wpilibj.vision.VisionPipeline;
+import edu.wpi.first.vision.VisionPipeline;
 
 import org.opencv.core.*;
 import org.opencv.core.Core.*;
@@ -40,32 +40,34 @@ public class GripPipeline implements VisionPipeline {
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
 	@Override	public void process(Mat source0) {
+		Mat source1 = new Mat();
 		// Step HSL_Threshold0:
-		Mat hslThresholdInput = source0;
-		double[] hslThresholdHue = {73.38129599317371, 99.1126318921815};
-		double[] hslThresholdSaturation = {243.0755510497436, 255.0};
-		double[] hslThresholdLuminance = {65.73742173558516, 255.0};
-		hslThreshold(hslThresholdInput, hslThresholdHue, hslThresholdSaturation, hslThresholdLuminance, hslThresholdOutput);
+		// Mat hslThresholdInput = source0;
+		// double[] hslThresholdHue = {70.14388592123126, 90.9215075652347};
+		// double[] hslThresholdSaturation = {243.0755510497436, 255.0};
+		// double[] hslThresholdLuminance = {65.73742173558516, 169.41978968857904};
+		// hslThreshold(hslThresholdInput, hslThresholdHue, hslThresholdSaturation, hslThresholdLuminance, hslThresholdOutput);
+		Imgproc.cvtColor(source0, source1, Imgproc.COLOR_BGR2GRAY);
 
 		// Step Find_Contours0:
-		Mat findContoursInput = hslThresholdOutput;
-		boolean findContoursExternalOnly = true;
-		findContours(findContoursInput, findContoursExternalOnly, findContoursOutput);
+		// Mat findContoursInput = hslThresholdOutput;
+		// boolean findContoursExternalOnly = true;
+		// findContours(findContoursInput, findContoursExternalOnly, findContoursOutput);
 
-		// Step Filter_Contours0:
-		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		double filterContoursMinArea = 12.0;
-		double filterContoursMinPerimeter = 45.0;
-		double filterContoursMinWidth = 38.0;
-		double filterContoursMaxWidth = 1000.0;
-		double filterContoursMinHeight = 19.0;
-		double filterContoursMaxHeight = 1000.0;
-		double[] filterContoursSolidity = {0, 100};
-		double filterContoursMaxVertices = 1000000.0;
-		double filterContoursMinVertices = 0.0;
-		double filterContoursMinRatio = 0.0;
-		double filterContoursMaxRatio = 1000.0;
-		filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, filterContoursOutput);
+		// // Step Filter_Contours0:
+		// ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
+		// double filterContoursMinArea = 12.0;
+		// double filterContoursMinPerimeter = 45.0;
+		// double filterContoursMinWidth = 38.0;
+		// double filterContoursMaxWidth = 1000.0;
+		// double filterContoursMinHeight = 53.0;
+		// double filterContoursMaxHeight = 1000.0;
+		// double[] filterContoursSolidity = {0, 100};
+		// double filterContoursMaxVertices = 1000000.0;
+		// double filterContoursMinVertices = 0.0;
+		// double filterContoursMinRatio = 0.0;
+		// double filterContoursMaxRatio = 1000.0;
+		// filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, filterContoursOutput);
 
 	}
 
