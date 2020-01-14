@@ -69,6 +69,8 @@ public class Robot extends TimedRobot {
       Mat source = new Mat(); // Mats are essentially video frame Objects
       Mat output = new Mat();
       GripPipeline pipeline = new GripPipeline();
+      ArrayList<MatOfPoint> points = null;
+      VisionPanel vp = new VisionPanel(1080, 720);
       camera.setExposureManual(0);
 
       while (!Thread.interrupted()) 
@@ -79,8 +81,11 @@ public class Robot extends TimedRobot {
 
         {
           pipeline.process(source);
+          points = pipeline.filterContoursOutput();
+          vp.setPoints(points);
+          vp.imageToContours();
           //Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
-          outputStream.putFrame(pipeline.hslThresholdOutput()); 
+          // outputStream.putFrame(pipeline.hslThresholdOutput()); 
         }
       }
     }).start();
