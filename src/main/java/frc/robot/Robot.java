@@ -9,6 +9,8 @@ package frc.robot;
 
 import java.util.ArrayList;
 
+import frc.robot.VisionFrame;
+
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -70,7 +72,7 @@ public class Robot extends TimedRobot {
       Mat output = new Mat();
       GripPipeline pipeline = new GripPipeline();
       ArrayList<MatOfPoint> points = null;
-      VisionPanel vp = new VisionPanel(1080, 720);
+      VisionFrame vf = new VisionFrame();
       camera.setExposureManual(0);
 
       while (!Thread.interrupted()) 
@@ -78,14 +80,11 @@ public class Robot extends TimedRobot {
         if (cvSink.grabFrame(source) == 0)
           System.out.print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
         else
-
         {
           pipeline.process(source);
           points = pipeline.filterContoursOutput();
-          vp.setPoints(points);
-          vp.imageToContours();
-          //Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
-          // outputStream.putFrame(pipeline.hslThresholdOutput()); 
+          vf.getVisionPanel().setPoints(points);
+          vf.getVisionPanel().imageToContours();
         }
       }
     }).start();

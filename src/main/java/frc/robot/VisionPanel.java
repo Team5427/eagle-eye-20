@@ -4,20 +4,25 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import java.awt.Color;
+
+
+import java.awt.Graphics;
+
 
 import java.util.ArrayList;
 
 public class VisionPanel extends JPanel
 {
-    public static ArrayList<MatOfPoint> points = null;
-    public static  BufferedImage image;
+    public static ArrayList<MatOfPoint> points;
+    public static ArrayList<Point> pt;
+    public static BufferedImage image;
     public static final int purpleColor = -15340065;
 
     public VisionPanel(int w, int h)
     {
         super();
         setSize(w,h);
-
     }
     public void run()
     {
@@ -46,6 +51,22 @@ public class VisionPanel extends JPanel
 
             for(Point p : points)
                 contoursImage.setRGB((int)p.x, (int)p.y, purpleColor);
+            
+        }
+    }
+    
+    public void paint(Graphics g)
+    {
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, getWidth(), getHeight());
+        g.setColor(Color.RED);
+        g.drawLine(0, 120, 320, 120);
+        g.drawLine(160, 0, 160, 240);
+
+        Point [] p = points.get(0).toArray();
+        for(int x = 0;x<p.length; x++)
+        {
+            System.out.println(p[x].get(x));
         }
     }
     public void setPoints(ArrayList<MatOfPoint> points)

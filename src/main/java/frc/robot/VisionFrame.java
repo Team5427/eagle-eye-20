@@ -8,9 +8,15 @@ import org.opencv.core.MatOfPoint;
 
 public class VisionFrame extends JFrame
 {
+    VisionPanel vp;
     public VisionFrame()
     {
-       // new VisionPanel(1080, 720);
+        vp = new VisionPanel(1080, 720);
+    }
+
+    public VisionPanel getVisionPanel()
+    {
+        return vp;
     }
     
 }
