@@ -26,7 +26,8 @@ public class Target {
     private double widthRatio = 0;
 
 
-    public Target(Point[] points) {
+    public Target(Point[] points) 
+    {
         this.points = points;
         Point topLeftPoint = points[0];
         Point topRightPoint = points[0];
