@@ -24,11 +24,13 @@ public class Target {
     private double bottomWidth;
     private Point center = new Point();
     private double widthRatio = 0;
+    private boolean isTarget = false;
 
 
-    public Target(Point[] points) 
+    public Target(Point[] points, boolean isTarget) 
     {
         this.points = points;
+        this.isTarget = isTarget;
         Point topLeftPoint = points[0];
         Point topRightPoint = points[0];
         Point bottomLeftPoint = points[0];
@@ -54,6 +56,16 @@ public class Target {
         bottomWidth = bottomRightPoint.x - bottomLeftPoint.x;
         widthRatio = (double)topWidth / bottomWidth;
 
+    }
+
+    public double getWidthRatio()
+    {
+        return widthRatio;
+    }
+
+    public void setIsTarget(boolean isTarget)
+    {
+        this.isTarget = isTarget;
     }
 
     public double getTapeDist()

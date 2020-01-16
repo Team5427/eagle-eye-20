@@ -54,10 +54,12 @@ public class VisionPanel extends JPanel
         for(int i = contours.length-1; i>0; i--)
         {
             points = ((MatOfPoint)contours[i]).toArray();
-            target = new Target(points);
+            target = new Target(points, false);
 
-            
-
+            if(target.getWidthRatio() >= 1.5)
+                target.setIsTarget(true);
+            else
+                target.setIsTarget(false);
             for(Point p : points)
                 contoursImage.setRGB((int)p.x, (int)p.y, PURPLE_COLOR);
             
