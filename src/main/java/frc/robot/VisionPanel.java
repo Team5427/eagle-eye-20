@@ -78,7 +78,7 @@ public class VisionPanel extends JPanel
         Point [] p = points.get(0).toArray();
         for(int x = 0;x<p.length; x++)
         {
-            System.out.println(p[x].get(x));
+            System.out.println(p[x].x);
         }
     }
 
