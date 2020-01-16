@@ -56,6 +56,11 @@ public class Target {
 
     }
 
+    public double getWidthRatio()
+    {
+        return widthRatio;
+    }
+
     public double getTapeDist()
     {
         double diffX = right.topLeft.x - left.topLeft.x;
