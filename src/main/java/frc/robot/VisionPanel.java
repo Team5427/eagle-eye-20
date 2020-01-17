@@ -1,33 +1,31 @@
 package frc.robot;
+
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import java.awt.Color;
+
+
 import java.awt.Graphics;
+
+
 import java.util.ArrayList;
 
 public class VisionPanel extends JPanel
 {
-    public static final int PURPLE_COLOR = -15340065;
-    
-    public int width;
-    public int height;
-    private ArrayList<MatOfPoint> points;
-    private ArrayList<Point> pt;
-    private ArrayList<Target> targets;
-    private Target largestTarget;
-    private BufferedImage image;
-    private Object[] contours;
-    private BufferedImage contoursImage;
+    public static ArrayList<MatOfPoint> points;
+    public static ArrayList<Target> validTargets;
+    public static ArrayList<Point> pt = null;
+    public static BufferedImage image = null;
+    public static final int purpleColor = -15340065;
+    public static Target biggestTarget = null;
 
     public VisionPanel(int w, int h)
     {
         super();
         setSize(w,h);
-        contoursImage = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
     }
-
     public void run()
     {
         while(true)
@@ -44,44 +42,49 @@ public class VisionPanel extends JPanel
             }
         }
     }
-
     public void imageToContours()
     {
-        contours = points.toArray();
+        Point[] contours = (Point[])points.toArray();
+        BufferedImage contoursImage = new BufferedImage(320, 240, BufferedImage.TYPE_4BYTE_ABGR);
+
         
         Point[] points;
         Target target;
-        for(int i = contours.length-1; i>0; i--)
+        for(Object currentContour : contours)
         {
-            points = ((MatOfPoint)contours[i]).toArray();
-            target = new Target(points, false);
+            points = ((MatOfPoint)currentContour).toArray();
+            target = new Target(points);
+            if(target.getWidthRatio()> 1.8 && target.getWidthRatio()<2.2)
+            {
+                validTargets.add(target);
+            }
 
-            if(target.getWidthRatio() >= 1.5)
-                target.setIsTarget(true);
-            else
-                target.setIsTarget(false);
             for(Point p : points)
-                contoursImage.setRGB((int)p.x, (int)p.y, PURPLE_COLOR);
+                contoursImage.setRGB((int)p.x, (int)p.y, purpleColor);
             
         }
+
+        if(!validTargets.isEmpty())
+            biggestTarget = validTargets.get(0);
+            
+        for(Target t : validTargets)
+        {
+            if(t.gettopWidth()>biggestTarget.gettopWidth())
+                biggestTarget=t;
+        }
     }
-    
+
     public void paint(Graphics g)
     {
-        g.setColor(Color.BLACK);
+        g.setColor(Color.WHITE);
         g.fillRect(0, 0, getWidth(), getHeight());
         g.setColor(Color.RED);
         g.drawLine(0, 120, 320, 120);
         g.drawLine(160, 0, 160, 240);
 
-        g.setColor(Color.WHITE);
         Point [] p = points.get(0).toArray();
-        for(int x = 0;x<p.length; x++)
-        {
-            System.out.println(p[x].x);
-        }
+       
     }
-
     public void setPoints(ArrayList<MatOfPoint> points)
     {
         this.points = points;
