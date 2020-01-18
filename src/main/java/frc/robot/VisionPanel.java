@@ -5,11 +5,7 @@ import javax.swing.JPanel;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import java.awt.Color;
-
-
 import java.awt.Graphics;
-
-
 import java.util.ArrayList;
 
 public class VisionPanel extends JPanel
@@ -33,7 +29,6 @@ public class VisionPanel extends JPanel
             try
             {
                 Thread.sleep(1000/20);
-                
                 imageToContours();
             }
             catch(Exception e)
@@ -54,7 +49,7 @@ public class VisionPanel extends JPanel
         {
             points = ((MatOfPoint)currentContour).toArray();
             target = new Target(points);
-            if(target.getWidthRatio()> 1.8 && target.getWidthRatio()<2.2)
+            if(target.getWidthRatio()> 1.5 && target.getWidthRatio()<2.5)
             {
                 validTargets.add(target);
             }
@@ -65,7 +60,10 @@ public class VisionPanel extends JPanel
         }
 
         if(!validTargets.isEmpty())
+        {
             biggestTarget = validTargets.get(0);
+            System.out.println("No Valid Targets");
+        }
             
         for(Target t : validTargets)
         {
@@ -79,14 +77,34 @@ public class VisionPanel extends JPanel
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, getWidth(), getHeight());
         g.setColor(Color.RED);
-        g.drawLine(0, 120, 320, 120);
-        g.drawLine(160, 0, 160, 240);
 
-        Point [] p = points.get(0).toArray();
-       
+        double tlx = biggestTarget.getTopLeftPoint().x;
+        double trx = biggestTarget.getTopRightPoint().x;
+        double blx = biggestTarget.getBottomLeftPoint().x;
+        double brx = biggestTarget.getBottomRightPoint().x;
+        double tly = biggestTarget.getTopLeftPoint().y;
+        double tryy = biggestTarget.getTopRightPoint().y;
+        double bly = biggestTarget.getBottomLeftPoint().y;
+        double bry = biggestTarget.getBottomRightPoint().y;
+        double topWidth = biggestTarget.gettopWidth();
+
+        g.drawLine((int)tlx,(int)tly,(int)(tlx+topWidth),(int)tly);
+        g.drawLine((int)tlx,(int)tly,(int)(blx),(int)(bly));
+        g.drawLine((int)blx,(int)bly,(int)(brx),(int)(bry));
+        g.drawLine((int)brx,(int)bry,(int)(trx),(int)(tryy));
+        g.drawLine((int)trx,(int)tryy,(int)(trx-topWidth),(int)(tryy));
+        g.drawLine((int)(tlx+topWidth),(int)tly,(int)(blx),(int)(bly+topWidth));
+        g.drawLine((int)(blx),(int)(bly+topWidth),(int)(brx),(int)(bry+topWidth));
+        repaint();
+
     }
     public void setPoints(ArrayList<MatOfPoint> points)
     {
-        this.points = points;
+        this.points.clear();
+        for(MatOfPoint mp : points)
+        {
+            this.points.add(mp);
+        }
+        
     }
 }

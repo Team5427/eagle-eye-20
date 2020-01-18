@@ -74,6 +74,8 @@ public class Robot extends TimedRobot {
       ArrayList<MatOfPoint> points = null;
       VisionFrame vf = new VisionFrame();
       camera.setExposureManual(0);
+      VisionPanel vpp = vf.getVisionPanel();
+
 
       while (!Thread.interrupted()) 
       {
@@ -81,10 +83,11 @@ public class Robot extends TimedRobot {
           System.out.print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
         else
         {
+          VisionPanel vp = vf.getVisionPanel();
           pipeline.process(source);
           points = pipeline.filterContoursOutput();
-          vf.getVisionPanel().setPoints(points);
-          vf.getVisionPanel().imageToContours();
+          vp.setPoints(points);
+          vp.imageToContours();
         }
       }
     }).start();

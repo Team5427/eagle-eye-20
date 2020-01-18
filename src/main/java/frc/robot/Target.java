@@ -21,28 +21,27 @@ public class Target {
 
     Point[] points;
 
-    public static final double HEIGHT_TARGET = 0;
     private double height;
     private double topWidth;
     private double bottomWidth;
     private Point center = new Point();
     private double widthRatio = 0;
     private ArrayList<Point> outerPoints;
-    private boolean isBelow = false;
     private double leftMinAngle = 0;
     private double rightMinAngle = 0;
-    private Point leftMinPoint = null;
-    private Point rightMinPoint = null;
     private double bottomPointVal = 0;
     private Point topLeftPoint = null;
     private Point topRightPoint = null;
     private Point bottomLeftPoint = null;
     private Point bottomRightPoint = null;
 
-
-    public Target(Point[] points) 
+    public Target(Point[] pts) 
     {
-        this.points = points;
+        points = new Point[pts.length];
+        for(int x = 0; x<pts.length;x++)
+        {
+            points[x] = pts[x];
+        }
         Point topLeftPoint = points[0];
         Point topRightPoint = points[0];
         Point bottomLeftPoint = null;
@@ -68,9 +67,7 @@ public class Target {
 
             if(p.y < bottomPointVal)
                 bottomPointVal = p.y;
-
         }
-
 
         center.x = (topLeftPoint.x + topRightPoint.x) / 2;
         center.y = (topLeftPoint.y + bottomPointVal) / 2;
@@ -97,9 +94,8 @@ public class Target {
                     if(angle < leftMinAngle)
                     {
                         leftMinAngle = angle;
-                        leftMinPoint = outerPoints.get(x);
+                        bottomLeftPoint = outerPoints.get(x);
                     }
-                    
                 }
             }
         }
@@ -127,9 +123,8 @@ public class Target {
                     if(angle < rightMinAngle)
                     {
                         rightMinAngle = angle;
-                        rightMinPoint = outerPoints.get(x);
+                        bottomRightPoint = outerPoints.get(x);
                     }
-                    
                 }
             }
         }
