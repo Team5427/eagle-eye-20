@@ -1,15 +1,23 @@
-package frc.robot;
+package Vision;
 
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
+
+import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-public class VisionPanel extends JPanel
-{
+public class VisionPanel extends JPanel {
+    private static final long serialVersionUID = 1L;
     public static ArrayList<MatOfPoint> points;
     public static ArrayList<Target> validTargets;
     public static ArrayList<Point> pt = null;
@@ -17,26 +25,42 @@ public class VisionPanel extends JPanel
     public static final int purpleColor = -15340065;
     public static Target biggestTarget = null;
 
-    public VisionPanel(int w, int h)
-    {
+    public VisionPanel(int width, int height) {
         super();
-        setSize(w,h);
-    }
-    public void run()
-    {
-        while(true)
-        {
-            try
-            {
-                Thread.sleep(1000/20);
-                imageToContours();
+        setSize(width, height);
+        new Thread(() -> {
+            UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+            camera.setResolution(640, 480);
+            System.out.println("agshkahrhresl");
+            CvSink cvSink = CameraServer.getInstance().getVideo();
+            CvSource outputStream = CameraServer.getInstance().putVideo("Processed", 640, 480);
+
+            Mat source = new Mat();
+            GripPipeline pipeline = new GripPipeline();
+            ArrayList<MatOfPoint> points = null;
+            camera.setExposureManual(0);
+
+            while (!Thread.interrupted()) {
+                if (cvSink.grabFrame(source) == 0)
+                    System.out.print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+                else {
+                    pipeline.process(source);
+                    outputStream.putFrame(pipeline.hslThresholdOutput());
+                    points = pipeline.filterContoursOutput();
+                    setPoints(points);
+                    imageToContours();
+                    try {
+                        Thread.sleep(1000 / 20);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+              }
             }
-            catch(Exception e)
-            {
-                e.printStackTrace();
-            }
+          }).start();
+        
         }
-    }
+    
+  
     public void imageToContours()
     {
         Point[] contours = (Point[])points.toArray();
@@ -98,13 +122,17 @@ public class VisionPanel extends JPanel
         repaint();
 
     }
-    public void setPoints(ArrayList<MatOfPoint> points)
+    public void setPoints(ArrayList<MatOfPoint> pts)
     {
-        this.points.clear();
-        for(MatOfPoint mp : points)
+        points.clear();
+        for(MatOfPoint mp : pts)
         {
-            this.points.add(mp);
+            points.add(mp);
         }
-        
+    }
+    public void addNotify()
+    {
+        super.addNotify();
+        requestFocus();
     }
 }

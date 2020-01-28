@@ -1,4 +1,4 @@
-package frc.robot;
+package Vision;
 
 import java.util.ArrayList;
 
@@ -99,7 +99,6 @@ public class Target {
                 }
             }
         }
-
 
         for(int x = 1; x<outerPoints.size()-1; x++)
         {

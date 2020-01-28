@@ -9,7 +9,6 @@ package frc.robot;
 
 import java.util.ArrayList;
 
-import frc.robot.VisionFrame;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -55,42 +54,40 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-
     m_robotContainer = new RobotContainer();
 
     System.out.println("kuykfwegteiygewkwytriweutwuguy");
-    new Thread(() -> {
+   // new Thread(() -> {
       // Initializes Camera from RoboRio and starts capture
-      UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-      camera.setResolution(640, 480); // sets resolution
-      System.out.println("agshkahrhresl");
-      // Gets video from RoboRio CameraServer [accessible via SmrtDshbrd]
-      CvSink cvSink = CameraServer.getInstance().getVideo();
-      CvSource outputStream = CameraServer.getInstance().putVideo("Processed", 640, 480);
+      // UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+      // camera.setResolution(640, 480); // sets resolution
+      // System.out.println("agshkahrhresl");
+      // // Gets video from RoboRio CameraServer [accessible via SmrtDshbrd]
+      // CvSink cvSink = CameraServer.getInstance().getVideo();
+      // CvSource outputStream = CameraServer.getInstance().putVideo("Processed", 640, 480);
 
-      Mat source = new Mat(); // Mats are essentially video frame Objects
-      Mat output = new Mat();
-      GripPipeline pipeline = new GripPipeline();
-      ArrayList<MatOfPoint> points = null;
-      VisionFrame vf = new VisionFrame();
-      camera.setExposureManual(0);
-      VisionPanel vpp = vf.getVisionPanel();
+    //  Mat source = new Mat(); // Mats are essentially video frame Objects
+   //   GripPipeline pipeline = new GripPipeline();
+   //   ArrayList<MatOfPoint> points = null;
+   //   VisionFrame vf = new VisionFrame("VisionFrame");
+   //   camera.setExposureManual(0);
+      //VisionPanel vp;
 
-
-      while (!Thread.interrupted()) 
-      {
-        if (cvSink.grabFrame(source) == 0)
-          System.out.print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-        else
-        {
-          VisionPanel vp = vf.getVisionPanel();
-          pipeline.process(source);
-          points = pipeline.filterContoursOutput();
-          vp.setPoints(points);
-          vp.imageToContours();
-        }
-      }
-    }).start();
+    //   while (!Thread.interrupted()) 
+    //   {
+    //     if (cvSink.grabFrame(source) == 0)
+    //       System.out.print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+    //     else 
+    //     {
+    //  //      vp = vf.getVisionPanel();
+    //        pipeline.process(source);
+    //        outputStream.putFrame(pipeline.hslThresholdOutput());
+    //        points = pipeline.filterContoursOutput();
+    //  //      vp.setPoints(points);
+    //  //      vp.imageToContours();
+    //     }
+    //   }
+    // }).start();
   
   }
 
@@ -108,8 +105,6 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
-    
-    
   }
 
   /**
@@ -174,21 +169,3 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
