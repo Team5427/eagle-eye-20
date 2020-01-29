@@ -28,35 +28,35 @@ public class VisionPanel extends JPanel {
     public VisionPanel(int width, int height) {
         super();
         setSize(width, height);
-        new Thread(() -> {
-            UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-            camera.setResolution(640, 480);
-            System.out.println("agshkahrhresl");
-            CvSink cvSink = CameraServer.getInstance().getVideo();
-            CvSource outputStream = CameraServer.getInstance().putVideo("Processed", 640, 480);
+        // new Thread(() -> {
+        //    // UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+        //     //camera.setResolution(640, 480);
+        //     //System.out.println("agshkahrhresl");
+        //     //CvSink cvSink = CameraServer.getInstance().getVideo();
+        //     //CvSource outputStream = CameraServer.getInstance().putVideo("Processed", 640, 480);
 
-            Mat source = new Mat();
-            GripPipeline pipeline = new GripPipeline();
-            ArrayList<MatOfPoint> points = null;
-            camera.setExposureManual(0);
+        //     Mat source = new Mat();
+        //     GripPipeline pipeline = new GripPipeline();
+        //     ArrayList<MatOfPoint> points = null;
+        //     camera.setExposureManual(0);
 
-            while (!Thread.interrupted()) {
-                if (cvSink.grabFrame(source) == 0)
-                    System.out.print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-                else {
-                    pipeline.process(source);
-                    outputStream.putFrame(pipeline.hslThresholdOutput());
-                    points = pipeline.filterContoursOutput();
-                    setPoints(points);
-                    imageToContours();
-                    try {
-                        Thread.sleep(1000 / 20);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-              }
-            }
-          }).start();
+        //     while (!Thread.interrupted()) {
+        //         if (cvSink.grabFrame(source) == 0)
+        //             System.out.print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+        //         else {
+        //             pipeline.process(source);
+        //             outputStream.putFrame(pipeline.hslThresholdOutput());
+        //             points = pipeline.filterContoursOutput();
+        //             setPoints(points);
+        //             imageToContours();
+        //             try {
+        //                 Thread.sleep(1000 / 20);
+        //             } catch (InterruptedException e) {
+        //                 e.printStackTrace();
+        //             }
+        //       }
+        //     }
+        //   }).start();
         
         }
     

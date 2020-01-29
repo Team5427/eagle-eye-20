@@ -1,3 +1,4 @@
+package Vision;
 import Vision.VisionFrame;
 
 public class Main {

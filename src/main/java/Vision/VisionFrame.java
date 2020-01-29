@@ -2,6 +2,7 @@ package Vision;
 
 import java.awt.*;
 import javax.swing.*;
+
 public class VisionFrame extends JFrame
 {
 	
