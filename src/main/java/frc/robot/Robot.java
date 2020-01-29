@@ -9,7 +9,6 @@ package frc.robot;
 
 import java.util.ArrayList;
 
-
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -20,6 +19,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import Vision.VisionFrame;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
@@ -55,7 +55,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
-
     System.out.println("kuykfwegteiygewkwytriweutwuguy");
    // new Thread(() -> {
       // Initializes Camera from RoboRio and starts capture

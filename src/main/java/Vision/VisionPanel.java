@@ -101,26 +101,26 @@ public class VisionPanel extends JPanel {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, getWidth(), getHeight());
         g.setColor(Color.RED);
+        if(biggestTarget!=null){
+                double tlx = biggestTarget.getTopLeftPoint().x;
+                double trx = biggestTarget.getTopRightPoint().x;
+                double blx = biggestTarget.getBottomLeftPoint().x;
+                double brx = biggestTarget.getBottomRightPoint().x;
+                double tly = biggestTarget.getTopLeftPoint().y;
+                double tryy = biggestTarget.getTopRightPoint().y;
+                double bly = biggestTarget.getBottomLeftPoint().y;
+                double bry = biggestTarget.getBottomRightPoint().y;
+                double topWidth = biggestTarget.gettopWidth();
 
-        double tlx = biggestTarget.getTopLeftPoint().x;
-        double trx = biggestTarget.getTopRightPoint().x;
-        double blx = biggestTarget.getBottomLeftPoint().x;
-        double brx = biggestTarget.getBottomRightPoint().x;
-        double tly = biggestTarget.getTopLeftPoint().y;
-        double tryy = biggestTarget.getTopRightPoint().y;
-        double bly = biggestTarget.getBottomLeftPoint().y;
-        double bry = biggestTarget.getBottomRightPoint().y;
-        double topWidth = biggestTarget.gettopWidth();
-
-        g.drawLine((int)tlx,(int)tly,(int)(tlx+topWidth),(int)tly);
-        g.drawLine((int)tlx,(int)tly,(int)(blx),(int)(bly));
-        g.drawLine((int)blx,(int)bly,(int)(brx),(int)(bry));
-        g.drawLine((int)brx,(int)bry,(int)(trx),(int)(tryy));
-        g.drawLine((int)trx,(int)tryy,(int)(trx-topWidth),(int)(tryy));
-        g.drawLine((int)(tlx+topWidth),(int)tly,(int)(blx),(int)(bly+topWidth));
-        g.drawLine((int)(blx),(int)(bly+topWidth),(int)(brx),(int)(bry+topWidth));
-        repaint();
-
+                g.drawLine((int)tlx,(int)tly,(int)(tlx+topWidth),(int)tly);
+                g.drawLine((int)tlx,(int)tly,(int)(blx),(int)(bly));
+                g.drawLine((int)blx,(int)bly,(int)(brx),(int)(bry));
+                g.drawLine((int)brx,(int)bry,(int)(trx),(int)(tryy));
+                g.drawLine((int)trx,(int)tryy,(int)(trx-topWidth),(int)(tryy));
+                g.drawLine((int)(tlx+topWidth),(int)tly,(int)(blx),(int)(bly+topWidth));
+                g.drawLine((int)(blx),(int)(bly+topWidth),(int)(brx),(int)(bry+topWidth));
+                repaint();
+        }
     }
     public void setPoints(ArrayList<MatOfPoint> pts)
     {
