@@ -1,4 +1,4 @@
-package Vision;
+package frc.robot.Vision;
 
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
@@ -24,16 +24,25 @@ public class VisionPanel extends JPanel {
     public static BufferedImage image = null;
     public static final int purpleColor = -15340065;
     public static Target biggestTarget = null;
+    GripPipeline pipeline = new GripPipeline();
+    public static UsbCamera cameraOne;
+    public static CameraServer cameraServer;
+    public static CvSink cvSink;
+    public static Mat source;
 
-    public VisionPanel(int width, int height) {
+    public VisionPanel(int width, int height) 
+    {
         super();
         setSize(width, height);
+        cameraServer = cameraServer.getInstance();
+
+
         // new Thread(() -> {
-        //    // UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-        //     //camera.setResolution(640, 480);
-        //     //System.out.println("agshkahrhresl");
-        //     //CvSink cvSink = CameraServer.getInstance().getVideo();
-        //     //CvSource outputStream = CameraServer.getInstance().putVideo("Processed", 640, 480);
+        //     UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
+        //     camera.setResolution(640, 480);
+        //     System.out.println("agshkahrhresl");
+        //     CvSink cvSink = CameraServer.getInstance().getVideo();
+        //     CvSource outputStream = CameraServer.getInstance().putVideo("Processed", 640, 480);
 
         //     Mat source = new Mat();
         //     GripPipeline pipeline = new GripPipeline();
@@ -98,7 +107,7 @@ public class VisionPanel extends JPanel {
 
     public void paint(Graphics g)
     {
-        g.setColor(Color.WHITE);
+        g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
         g.setColor(Color.RED);
         if(biggestTarget!=null){

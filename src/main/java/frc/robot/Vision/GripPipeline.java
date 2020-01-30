@@ -1,4 +1,4 @@
-package Vision;
+package frc.robot.Vision;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,6 +16,7 @@ import org.opencv.core.Core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.*;
 import org.opencv.objdetect.*;
+import org.opencv.core.Mat;
 
 /**
 * NewPipelineGood class.
@@ -31,9 +32,9 @@ public class GripPipeline implements VisionPipeline {
 	private ArrayList<MatOfPoint> findContoursOutput = new ArrayList<MatOfPoint>();
 	private ArrayList<MatOfPoint> filterContoursOutput = new ArrayList<MatOfPoint>();
 
-	static {
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-	}
+	// static {
+	// 	System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+	// }
 
 	/**
 	 * This is the primary method that runs the entire pipeline and updates the outputs.

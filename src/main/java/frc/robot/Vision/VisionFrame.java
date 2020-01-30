@@ -1,4 +1,4 @@
-package Vision;
+package frc.robot.Vision;
 
 import java.awt.*;
 import javax.swing.*;
