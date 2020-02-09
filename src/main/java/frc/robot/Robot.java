@@ -14,20 +14,24 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
+
 import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-import frc.robot.Vision.VisionFrame;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
+import frc.robot.Vision.GripPipeline;
+import frc.robot.Vision.Target;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
@@ -43,6 +47,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+  private static CameraServer cameraServer;
   // public static CvSink cvSink;
   // public static CvSource outputStream;
 
@@ -60,37 +65,70 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_robotContainer = new RobotContainer();
     System.out.println("kuykfwegteiygewkwytriweutwuguy");
-   // new Thread(() -> {
+    new Thread(() -> {
       // Initializes Camera from RoboRio and starts capture
-      // UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-      // camera.setResolution(640, 480); // sets resolution
-      // System.out.println("agshkahrhresl");
-      // // Gets video from RoboRio CameraServer [accessible via SmrtDshbrd]
-      // CvSink cvSink = CameraServer.getInstance().getVideo();
-      // CvSource outputStream = CameraServer.getInstance().putVideo("Processed", 640, 480);
+       UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+       camera.setResolution(640, 480); // sets resolution
+       System.out.println("agshkahrhresl");
+      // // Gets video from RoboRio CameraServer [accessible via SmrtDshbrd]    
+       CvSink cvSink = CameraServer.getInstance().getVideo();
+       CvSource outputStream = CameraServer.getInstance().putVideo("Processed", 640, 480);
 
-    //  Mat source = new Mat(); // Mats are essentially video frame Objects
-   //   GripPipeline pipeline = new GripPipeline();
-   //   ArrayList<MatOfPoint> points = null;
-   //   VisionFrame vf = new VisionFrame("VisionFrame");
-   //   camera.setExposureManual(0);
-      //VisionPanel vp;
+      Mat source = new Mat(); // Mats are essentially video frame Objects
+      GripPipeline pipeline = new GripPipeline();
+      camera.setExposureManual(0);
 
-    //   while (!Thread.interrupted()) 
-    //   {
-    //     if (cvSink.grabFrame(source) == 0)
-    //       System.out.print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-    //     else 
-    //     {
-    //  //      vp = vf.getVisionPanel();
-    //        pipeline.process(source);
-    //        outputStream.putFrame(pipeline.hslThresholdOutput());
-    //        points = pipeline.filterContoursOutput();
-    //  //      vp.setPoints(points);
-    //  //      vp.imageToContours();
-    //     }
-    //   }
-    // }).start();
+      while (!Thread.interrupted()) 
+      {
+        if (cvSink.grabFrame(source) == 0)
+          System.out.print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+        else 
+        {
+          System.out.print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
+           pipeline.process(source);
+           outputStream.putFrame(pipeline.hslThresholdOutput());
+           ArrayList<MatOfPoint> filteredPoints = pipeline.filterContoursOutput();
+           ArrayList<Target> validTargets=  new ArrayList<Target>();
+           Target biggestTarget = null;
+
+           Point[] points = null;
+   
+           Target target;
+           for(MatOfPoint currentMat : filteredPoints)
+           {
+              points = ((MatOfPoint)currentMat).toArray();
+              target = new Target(points);
+
+              validTargets.add(target);
+           }
+   
+           if(validTargets.isEmpty())
+           {
+              SmartDashboard.putBoolean("Target Exists?", false);
+           }
+           else{
+            SmartDashboard.putBoolean("Target Exists?", true);
+            if(validTargets.isEmpty())
+             continue;
+             SmartDashboard.putNumber("Target Amounts", validTargets.size());
+          biggestTarget = validTargets.get(0);
+           for(Target t : validTargets)
+           {
+               if(t.getLeftValDiff()>biggestTarget.getLeftValDiff())
+                   biggestTarget=t;
+           }
+           SmartDashboard.putNumber("Proportion", biggestTarget.getProportion());
+           SmartDashboard.putNumber("LeftValDiff", biggestTarget.getLeftValDiff());
+           SmartDashboard.putNumber("RightvalDiff", biggestTarget.getRightValDiff());
+           SmartDashboard.putNumber("Size", biggestTarget.getSize());
+           SmartDashboard.putNumber("Distance", biggestTarget.getDistance());
+          }
+
+   //        vp.setPoints(points);
+   //        vp.imageToContours();
+        }
+      }
+     }).start();
   
   }
 

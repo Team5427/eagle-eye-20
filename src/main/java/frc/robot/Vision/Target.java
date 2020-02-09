@@ -21,19 +21,23 @@ public class Target {
 
     Point[] points;
 
-    private double height;
     private double topWidth;
-    private double bottomWidth;
     private Point center = new Point();
     private double widthRatio = 0;
-    private ArrayList<Point> outerPoints;
-    private double leftMinAngle = 0;
-    private double rightMinAngle = 0;
+
     private double bottomPointVal = 0;
     private Point topLeftPoint = null;
     private Point topRightPoint = null;
     private Point bottomLeftPoint = null;
     private Point bottomRightPoint = null;
+    private double leftValDiff = 0;
+    private double rightValDiff = 0;
+    private double proportion = 0;
+    private double size = 0;
+    
+
+
+
 
     public Target(Point[] pts) 
     {
@@ -42,102 +46,62 @@ public class Target {
         {
             points[x] = pts[x];
         }
+
         Point topLeftPoint = points[0];
         Point topRightPoint = points[0];
-        Point bottomLeftPoint = null;
-        Point bottomRightPoint = null;
-
-        for(int i = 0; i<points.length; i++)
-        {
-            for(int j = 0; j<points.length; j++)
-            {
-                if(points[j].x == points[i].x && points[i].y  < points[j].y)
-                    break;
-            }
-            outerPoints.add(points[i]);
-        }
     
         bottomPointVal = points[0].y;
         for (Point p : points)
         {
             if(p.x < topLeftPoint.x)
                 topLeftPoint = p;
-            else if(p.x > topRightPoint.x)
+            if(p.x > topRightPoint.x)
                 topRightPoint = p;
 
-            if(p.y < bottomPointVal)
+            //think of it as fourth quadrant, y=0 is on top
+            if(p.y > bottomPointVal)
+            {
                 bottomPointVal = p.y;
+            }
         }
 
+        center.y = ((topLeftPoint.y + bottomPointVal) / 2) + ((topRightPoint.y + bottomPointVal )/2)/2;
         center.x = (topLeftPoint.x + topRightPoint.x) / 2;
-        center.y = (topLeftPoint.y + bottomPointVal) / 2;
+     
+        leftValDiff  = Math.abs(topLeftPoint.y-bottomPointVal);
+        rightValDiff = Math.abs(topRightPoint.y-bottomPointVal);
 
-        for(int x = 1; x<outerPoints.size()-1; x++)
-        {
-            double initialpx = outerPoints.get(x-1).x;
-            double initialpy = outerPoints.get(x-1).y;
-            double currentpx = outerPoints.get(x).x;
-            double currentpy = outerPoints.get(x).y;
-            double nextpx = outerPoints.get(x+1).x;
-            double nextpy = outerPoints.get(x+1).y;
+        proportion = leftValDiff/rightValDiff;
+        size = (leftValDiff + rightValDiff)/2;
 
-            if(initialpy >= center.y && currentpy >= center.y && nextpy >= center.y)
-            {
-                if(initialpx <= center.x && currentpx <= center.x && nextpx <= center.x)
-                {
-                    double curToInitial = Math.sqrt(Math.pow(currentpx-initialpx,2)+ Math.pow(currentpy-initialpy,2));
-                    double curToNext = Math.sqrt(Math.pow(currentpx-nextpx,2)+ Math.pow(currentpy-nextpy,2));
-                    double initialToNext = Math.sqrt(Math.pow(initialpx-nextpx,2)+ Math.pow(initialpy-nextpy,2));
-
-                    double angle = Math.acos((Math.pow(curToInitial,2)+Math.pow(curToNext,2)- Math.pow(initialToNext,2))/(2 * curToInitial * curToNext));
-
-                    if(angle < leftMinAngle)
-                    {
-                        leftMinAngle = angle;
-                        bottomLeftPoint = outerPoints.get(x);
-                    }
-                }
-            }
-        }
-
-        for(int x = 1; x<outerPoints.size()-1; x++)
-        {
-            double initialpx = outerPoints.get(x-1).x;
-            double initialpy = outerPoints.get(x-1).y;
-            double currentpx = outerPoints.get(x).x;
-            double currentpy = outerPoints.get(x).y;
-            double nextpx = outerPoints.get(x+1).x;
-            double nextpy = outerPoints.get(x+1).y;
-
-            if(initialpy >= center.y && currentpy >= center.y && nextpy >= center.y)
-            {
-                if(initialpx >= center.x && currentpx >= center.x && nextpx >= center.x)
-                {
-                    double curToInitial = Math.sqrt(Math.pow(currentpx-initialpx,2)+ Math.pow(currentpy-initialpy,2));
-                    double curToNext = Math.sqrt(Math.pow(currentpx-nextpx,2)+ Math.pow(currentpy-nextpy,2));
-                    double initialToNext = Math.sqrt(Math.pow(initialpx-nextpx,2)+ Math.pow(initialpy-nextpy,2));
-
-                    double angle = Math.acos((Math.pow(curToInitial,2)+Math.pow(curToNext,2)- Math.pow(initialToNext,2))/(2 * curToInitial * curToNext));
-
-                    if(angle < rightMinAngle)
-                    {
-                        rightMinAngle = angle;
-                        bottomRightPoint = outerPoints.get(x);
-                    }
-                }
-            }
-        }
-
-        height = Math.abs(bottomLeftPoint.y - topLeftPoint.y);
-        topWidth = Math.abs(topRightPoint.x - topLeftPoint.x);
-        bottomWidth = Math.abs(bottomRightPoint.x - bottomLeftPoint.x);
-        widthRatio = (double)topWidth / bottomWidth;
-
+        //TODO FILTER IF THERE ARE MULTIPLE TARGETS
     }
-
     public double getWidthRatio()
     {
         return widthRatio;
+    }
+    public double getDistance()
+    {
+        // 2/9/20 distance model A with 1 outlier and somewhat evenly spaced out points
+        // return (.029611)*(Math.pow(size,2)) + (-7.04515)*size + (472.515);
+        // 2/9/20 distance model B with more points clustered under 150 inches
+        return (.015631)*(Math.pow(size,2)) + (-4.49081)*size + (359.922);
+    }
+    public double getLeftValDiff()
+    {
+        return leftValDiff;
+    }
+    public double getRightValDiff()
+    {
+        return rightValDiff;
+    }
+    public double getProportion()
+    {
+        return proportion;
+    }
+    public double getSize()
+    {
+        return size;
     }
     public double gettopWidth()
     {
