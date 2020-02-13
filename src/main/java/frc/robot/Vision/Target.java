@@ -14,7 +14,6 @@ public class Target {
      */
     
     public boolean isHatch;
-
     /**
      * From Manual - In inches
      */

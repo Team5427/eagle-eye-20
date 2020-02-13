@@ -20,6 +20,7 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
@@ -36,6 +37,8 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.SPI;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -48,6 +51,7 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
   private static CameraServer cameraServer;
+  private static AHRS ahrs;
   // public static CvSink cvSink;
   // public static CvSource outputStream;
 
@@ -63,34 +67,40 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    
     m_robotContainer = new RobotContainer();
     System.out.println("kuykfwegteiygewkwytriweutwuguy");
+    ahrs = new AHRS(SPI.Port.kMXP);
+    ahrs.setAngleAdjustment(0);
+    
     new Thread(() -> {
       // Initializes Camera from RoboRio and starts capture
        UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
        camera.setResolution(640, 480); // sets resolution
        System.out.println("agshkahrhresl");
-      // // Gets video from RoboRio CameraServer [accessible via SmrtDshbrd]    
+      // // Gets video from RoboRio CameraServer [accessible via SmrtDshbrd]
        CvSink cvSink = CameraServer.getInstance().getVideo();
        CvSource outputStream = CameraServer.getInstance().putVideo("Processed", 640, 480);
 
       Mat source = new Mat(); // Mats are essentially video frame Objects
       GripPipeline pipeline = new GripPipeline();
       camera.setExposureManual(0);
-
+     
+      int timer = 0;
+          
       while (!Thread.interrupted()) 
       {
         if (cvSink.grabFrame(source) == 0)
           System.out.print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
         else 
         {
-          System.out.print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
+          SmartDashboard.putNumber("Angle", ahrs.getAngle());
+          System.out.print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
            pipeline.process(source);
            outputStream.putFrame(pipeline.hslThresholdOutput());
            ArrayList<MatOfPoint> filteredPoints = pipeline.filterContoursOutput();
            ArrayList<Target> validTargets=  new ArrayList<Target>();
            Target biggestTarget = null;
-
            Point[] points = null;
    
            Target target;
@@ -111,25 +121,46 @@ public class Robot extends TimedRobot {
             if(validTargets.isEmpty())
              continue;
              SmartDashboard.putNumber("Target Amounts", validTargets.size());
+
           biggestTarget = validTargets.get(0);
            for(Target t : validTargets)
            {
                if(t.getLeftValDiff()>biggestTarget.getLeftValDiff())
                    biggestTarget=t;
            }
+          //  if(biggestTarget.getProportion()>.9 && biggestTarget.getProportion()<1.1 && timer ==0)
+          //  {
+          //   ahrs.reset();
+          //   timer = 25;
+          //  }
+          //  if(timer !=0)
+          //   timer--;
+           if(ahrs.getAngle()>360)
+           {
+              ahrs.setAngleAdjustment(ahrs.getAngleAdjustment()+-360);
+           }
+           if(ahrs.getAngle()<-360)
+           {
+              ahrs.setAngleAdjustment(ahrs.getAngleAdjustment()+360);
+           }
            SmartDashboard.putNumber("Proportion", biggestTarget.getProportion());
            SmartDashboard.putNumber("LeftValDiff", biggestTarget.getLeftValDiff());
            SmartDashboard.putNumber("RightvalDiff", biggestTarget.getRightValDiff());
            SmartDashboard.putNumber("Size", biggestTarget.getSize());
            SmartDashboard.putNumber("Distance", biggestTarget.getDistance());
-          }
+           //System.out.println(ahrs.getAngle() + "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
 
+          //  ahrs.reset();
+           //System.out.println(ahrs.getAngle() + "**************************************************");
+           
+           
+
+          }
    //        vp.setPoints(points);
    //        vp.imageToContours();
         }
       }
      }).start();
-  
   }
 
   /**
