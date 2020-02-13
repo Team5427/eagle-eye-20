@@ -107,7 +107,7 @@ public class Robot extends TimedRobot {
            for(MatOfPoint currentMat : filteredPoints)
            {
               points = ((MatOfPoint)currentMat).toArray();
-              target = new Target(points);
+              target = new Target(points, source);
 
               validTargets.add(target);
            }
@@ -148,13 +148,12 @@ public class Robot extends TimedRobot {
            SmartDashboard.putNumber("RightvalDiff", biggestTarget.getRightValDiff());
            SmartDashboard.putNumber("Size", biggestTarget.getSize());
            SmartDashboard.putNumber("Distance", biggestTarget.getDistance());
-           //System.out.println(ahrs.getAngle() + "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
+           SmartDashboard.putNumber("DistanceFromCenter", biggestTarget.getDistanceFromCenter());
+           SmartDashboard.putBoolean("isCentered", biggestTarget.isCentered());
 
+           //System.out.println(ahrs.getAngle() + "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
           //  ahrs.reset();
            //System.out.println(ahrs.getAngle() + "**************************************************");
-           
-           
-
           }
    //        vp.setPoints(points);
    //        vp.imageToContours();
@@ -189,6 +188,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
   }
+
 
   /**
    * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
@@ -247,4 +247,5 @@ UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
             System.out.println("agshkahrhresl");
             CvSink cvSink = CameraServer.getInstance().getVideo();
             CvSource outputStream = CameraServer.getInstance().putVideo("Processed", 640, 480);
-}}
+}
+}

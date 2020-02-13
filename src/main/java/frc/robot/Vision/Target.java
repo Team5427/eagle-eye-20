@@ -33,13 +33,11 @@ public class Target {
     private double rightValDiff = 0;
     private double proportion = 0;
     private double size = 0;
+    private Mat mat;
     
-
-
-
-
-    public Target(Point[] pts) 
+    public Target(Point[] pts, Mat mat) 
     {
+        this.mat = mat;
         points = new Point[pts.length];
         for(int x = 0; x<pts.length;x++)
         {
@@ -66,7 +64,7 @@ public class Target {
 
         center.y = ((topLeftPoint.y + bottomPointVal) / 2) + ((topRightPoint.y + bottomPointVal )/2)/2;
         center.x = (topLeftPoint.x + topRightPoint.x) / 2;
-     
+
         leftValDiff  = Math.abs(topLeftPoint.y-bottomPointVal);
         rightValDiff = Math.abs(topRightPoint.y-bottomPointVal);
 
@@ -121,6 +119,14 @@ public class Target {
     public Point getBottomRightPoint()
     {
         return bottomRightPoint;
+    }
+    public double getDistanceFromCenter()
+    {
+        return center.x - mat.width()/2;
+    }
+    public boolean isCentered()
+    {
+        return Math.abs(getDistanceFromCenter())<21;
     }
    
     // public double getTapeDist()
